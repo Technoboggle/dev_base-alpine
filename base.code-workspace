@@ -1,0 +1,31 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.autoSave": "afterDelay",
+		"window.zoomLevel": 0,
+		"workbench.colorTheme": "Winter is Coming (Dark Blue)",
+		"workbench.colorCustomizations": {
+			"[GitHub Sharp][GitHub Sharp Dark]": {
+				"editorPane.background": "#d6d0d01a",
+				"sideBarSectionHeader.border": "#D3D3D3"
+			}
+		},
+		"shellformat.effectLanguages": [
+			"shellscript",
+			"dotenv",
+			"hosts",
+			"jvmoptions",
+			"ignore",
+			"gitignore",
+			"properties",
+			"spring-boot-properties",
+			"azcli",
+			"bats"
+		],
+		"intelephense.environment.phpVersion": "8.3.0"
+	}
+}

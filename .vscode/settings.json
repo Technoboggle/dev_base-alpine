@@ -1,0 +1,60 @@
+{
+    "files.autoSave": "afterDelay",
+    "window.zoomLevel": 0,
+    "workbench.colorTheme": "Winter is Coming (Dark Blue)",
+    "workbench.colorCustomizations": {
+        "[GitHub Sharp][GitHub Sharp Dark]": {
+            "editorPane.background": "#d6d0d01a",
+            "sideBarSectionHeader.border": "#D3D3D3",
+        }
+    },
+    "editor.bracketPairColorization.enabled": true,
+    "editor.guides.bracketPairs": "active",
+    "editor.fontFamily": "'Cascadia Code', 'Operator Mono', 'Fira Code', 'Menlo Regular'",
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": true,
+    "editor.formatOnSave": true,
+    "editor.tabSize": 4,
+    "[sass]": {
+        "editor.tabSize": 2,
+    },
+    "[html]": {
+        "editor.tabSize": 4,
+    },
+    "[javascript]": {
+        "editor.tabSize": 2,
+    },
+    "[dockerfile]": {
+        "editor.formatOnSave": false,
+        "editor.defaultFormatter": "foxundermoon.shell-format"
+    },
+    "[json]": {
+        "editor.tabSize": 2,
+    },
+    "[php]": {
+        "editor.tabSize": 2,
+    },
+    "files.eol": "\n",
+    "files.trimFinalNewlines": false,
+    "files.trimTrailingWhitespace": true,
+    "editor.wordWrap": "wordWrapColumn",
+    "editor.wordWrapColumn": 100,
+    "editor.rulers": [
+        80,
+        100
+    ],
+    "shellformat.effectLanguages": [
+        "shellscript",
+        "dotenv",
+        "hosts",
+        "jvmoptions",
+        "ignore",
+        "gitignore",
+        "properties",
+        "spring-boot-properties",
+        "azcli",
+        "bats"
+    ],
+    "php.validate.executablePath": "/usr/local/opt/php@8.3/bin/php",
+    "intelephense.environment.phpVersion": "8.3.0",
+}

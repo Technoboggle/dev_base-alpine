@@ -1,0 +1,18 @@
+{
+  "indent_size": 1,
+  "unformatted": [
+    "select",
+    "option",
+    "textarea"
+  ],
+  "content_unformatted": [
+    "select",
+    "option",
+    "textarea"
+  ],
+  "unformatted_content_delimiter": [
+    "select",
+    "option",
+    "textarea"
+  ]
+}
