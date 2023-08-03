@@ -51,11 +51,4 @@ Thumbs.db
 
 # Container Specific Entries #
 ##############################
-data/*
-data/.*
-djbdns-alpine
 scratch
-certbot/conf/accounts/*
-certbot/conf/archive/*
-certbot/conf/live/*
-certbot/conf/renewal/*
