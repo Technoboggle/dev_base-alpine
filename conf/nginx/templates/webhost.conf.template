@@ -76,8 +76,14 @@ server {
   #real_ip_header X-Forwarded-For;
   real_ip_header X-Real-IP;
 
+  # The following block enables testing of the customer error pages, it should be
+  # remmed out during notmal use. Replace the valin in =403 to test specific errors
+  location /throw_error {
+    try_files $uri $uri/ =403;
+  }
+
   # redirect requests for the logo image to the error directory where it cannot be overwritten
-  # redirect server 403 error pages to the static page /404.html
+  # redirect server error pages listed to the static pages in /errors
   error_page                403  /403.html;
   error_page                404  /404.html;
   error_page                500  /500.html;
@@ -85,10 +91,40 @@ server {
   error_page                503  /503.html;
   error_page                504  /504.html;
 
-  location ~* /((40[34]|50[0234])\.html)|(logo.png|favicon-16x16.png|favicon-32x32.png) {
-    root                    /var/www/errors;
+  location = /403.html {
+    root /var/www/errors;
     internal;
   }
+
+  location = /404.html {
+    root /var/www/errors;
+    internal;
+  }
+
+  location = /500.html {
+    root /var/www/errors;
+    internal;
+  }
+
+  location = /502.html {
+    root /var/www/errors;
+    internal;
+  }
+
+  location = /503.html {
+    root /var/www/errors;
+    internal;
+  }
+
+  location = /504.html {
+    root /var/www/errors;
+    internal;
+  }
+
+  #location ~* /((40[34]|50[0234])\.html)|(logo.png|favicon-16x16.png|favicon-32x32.png) {
+  #  root                    /var/www/errors;
+  #  internal;
+  }#
 
   if ($request_method !~ ^(GET|HEAD|POST)$ ) {
     return 444;
