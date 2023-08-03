@@ -5,10 +5,15 @@ xattr -c .git
 xattr -c .gitignore
 xattr -c .dockerignore
 xattr -c ./*
-find "$(pwd)" -type d -exec chmod ugo+x {} \;
-find "$(pwd)" -type f -exec chmod ugo=wr {} \;
-find "$(pwd)" -type f \( -iname \*.sh -o -iname \*.py \) -exec chmod ugo+x {} \;
 
 if [ ! -d "$(pwd)/data/redis" ]; then
     mkdir -p "$(pwd)/data/redis"
 fi
+
+#if [ ! -d "$(pwd)/src/html" ]; then
+#    mkdir -p "$(pwd)/src/html"
+#fi
+
+find "$(pwd)" -type d -exec chmod ugo=rwx {} \;
+find "$(pwd)" -type f -exec chmod ugo=wr {} \;
+find "$(pwd)" -type f \( -iname \*.sh -o -iname \*.py \) -exec chmod ugo+x {} \;

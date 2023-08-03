@@ -80,14 +80,17 @@ services:
       - php-82
       - redis
     ports:
-      - "8080:80"
-      # - "443:443"
+      - "80:80"
+      - "443:443"
     volumes:
-      - ./conf/nginx/base.nginx.conf:/etc/nginx/conf.d/default.conf
+      #- ./conf/nginx/base.nginx.conf:/etc/nginx/conf.d/default.conf
       - ./conf/nginx/templates:/etc/nginx/templates
+      - ./conf/nginx/dhparam.pem:/etc/nginx/ssl/dhparam4096.pem
       - errors_base:/var/www/errors
       - log_base:/var/log
       - src_base:/var/www/html
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
     networks:
       frontend:
         aliases:
@@ -101,10 +104,43 @@ services:
       - NGINX_ENDSUBST_OUTPUTDIR=/etc/nginc/conf.deamon
       - NGINX_PORT=80
       - NGINX_SSL_PORT=443
-      - NGINX_HOST0=dev_1
+      - NGINX_HOST=technoboggle.net
+      - NGINX_HOST0=www.technoboggle.net
+      - NGINX_DOMAIN=technoboggle.net
+
+  certbot:
+    image: certbot/certbot
+    container_name: tb_certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    command: certonly --webroot -w /var/www/certbot --force-renewal --email edward.finlayson@talktalk.net -d technoboggle.net --non-interactive --agree-tos
+    # The parameters are used to automate the process without you needing to
+    # manually enter the data on every container run.
+    #
+    # certonly: only generate certificate without installing
+    #
+    # webroot: use our own webserver in this case NGINX
+    # w: root directory of webserver for the challenges
+    # force-renewal: on repeated run renew certificates
+    # email: your email for notifcations
+    # d: domain for the certificate (you can enter
+    #   -d {domain} multiple times for different domains)
+    # agree-tos: agree the terms of service automatically
+    #   (dont set it, if you want to read and understand them first)
+
+  restarter:
+    hostname: restarter
+    container_name: tb_restarter
+    image: docker:cli
+    volumes: ["/var/run/docker.sock:/var/run/docker.sock"]
+    command: ["/bin/sh", "-c", "while true; do sleep 5184000 ; docker restart certbot; done"]
+    restart: unless-stopped
+    # In the command statement above the figuer of 5184000 represents the number
+    # of seconds in the recommended 60 day certifiace refersh interval at LetsEncrypt
 
   composer:
-    container_name: conposer
+    container_name: tb_composer
     image: composer:latest
     volumes:
       - ./src:/var/www/html
@@ -116,7 +152,7 @@ services:
   # This one is included for completeness ONLY
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: pma
+    container_name: tb_pma
     depends_on:
       - mysql
     links:
