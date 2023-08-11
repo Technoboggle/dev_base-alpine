@@ -52,3 +52,7 @@ Thumbs.db
 # Container Specific Entries #
 ##############################
 scratch
+
+## NOTE: Throughout the repository, there are subisduary .gitignore files which
+##       retain the complete directory structure while only keeping the files
+##       required to initiate the stack. please do NOT delete these files.

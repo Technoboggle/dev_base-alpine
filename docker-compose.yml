@@ -89,8 +89,8 @@ services:
       - errors_base:/var/www/errors
       - log_base:/var/log
       - src_base:/var/www/html
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
     networks:
       frontend:
         aliases:
@@ -112,8 +112,8 @@ services:
     image: certbot/certbot
     container_name: tb_certbot
     volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
     command: certonly --webroot -w /var/www/certbot --force-renewal --email edward.finlayson@talktalk.net -d technoboggle.net --non-interactive --agree-tos
     # The parameters are used to automate the process without you needing to
     # manually enter the data on every container run.
@@ -151,7 +151,7 @@ services:
 
   # This one is included for completeness ONLY
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
+    image: technoboggle/phpmyadmin-alpine:8.2-3.15
     container_name: tb_pma
     depends_on:
       - mysql

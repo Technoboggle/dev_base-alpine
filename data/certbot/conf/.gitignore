@@ -1,0 +1,10 @@
+# Ignore everything in this directory
+*
+# Except this .gitignore file
+!.gitignore
+!README
+!accounts
+!archive
+!live
+!renewal
+!renewal-hooks
