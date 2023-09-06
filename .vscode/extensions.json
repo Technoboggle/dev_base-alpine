@@ -3,6 +3,9 @@
     // Extension identifier format: ${publisher}.${name}. Example: vscode.csharp
     // List of extensions which should be recommended for users of this workspace.
     "recommendations": [
+        "ms-vscode-remote.remote-containers",
+        "ms-vscode.makefile-tools",
+        "ms-azuretools.vscode-docker",
         "formulahendry.auto-close-tag",
         "mikestead.dotenv",
         "vincaslt.highlight-matching-tag",
@@ -25,7 +28,6 @@
         "teabyii.ayu",
         "johnpapa.winteriscoming",
         "visualstudioexptteam.vscodeintellicode",
-        "ms-vscode.makefile-tools",
         "timonwong.shellcheck",
         "foxundermoon.shell-format",
     ],

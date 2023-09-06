@@ -1,5 +1,5 @@
         allow 127.0.0.1; # localhost
         allow 172.0.0.0/8; # locallan
         allow 81.174.128.108; # Chris Murfin
-        allow 79.77.1.179; # Fin
-        allow 192.168.1.165; # Fin local workstation
+        allow 62.31.145.254; # Fin
+        allow 192.168.0.15; # Fin local workstation

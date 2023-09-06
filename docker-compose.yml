@@ -25,7 +25,8 @@ services:
     ports:
       - '6579:6579'
     networks:
-      backend:
+      internal:
+
 
   mysql:
     hostname: mysql
@@ -41,7 +42,7 @@ services:
     ports:
       - "3306:3306"
     networks:
-      backend:
+      internal:
       frontend:
     volumes:
       - data_mysql:/var/lib/mysql
@@ -49,7 +50,7 @@ services:
   php-82:
     hostname: php-82
     container_name: tb_php
-    image: technoboggle/php-fpm-alpine:8.2.8-3.18
+    image: technoboggle/php-fpm-alpine:8.2.1-3.17
     depends_on:
       - redis
       - mysql
@@ -59,16 +60,40 @@ services:
     ports:
       - "9000:9000"
     networks:
-      dev_stack:
+      internal:
     volumes:
       - src_base:/var/www/html
       - log_base:/var/log
+      - php_conf:/mnt/conf
     working_dir: /var/www/html
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
       XDEBUG_MODE: develop,debug
       XDEBUG_CONFIG: clinet_host=host.docker.internal
+
+  # This one is included for completeness ONLY
+  phpmyadmin:
+    image: technoboggle/phpmyadmin-alpine:8.2-3.15
+    container_name: tb_pma
+    hostname: tb_pma
+    depends_on:
+      - mysql
+    links:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+      PMA_ABSOLUTE_URI: https://www.technoboggle.net/pma/
+    volumes:
+      - phpmyadminsessions:/sessions:rw
+    restart: always
+    #ports:
+    #  - 9900:9000
+    networks:
+      internal:
+
 
   nginx:
     hostname: nginx
@@ -79,6 +104,7 @@ services:
     links:
       - php-82
       - redis
+      - phpmyadmin # Dev only
     ports:
       - "80:80"
       - "443:443"
@@ -97,7 +123,9 @@ services:
           - otrack.city-uk.com
           - otrack
           - localhost
-      backend:
+      internal:
+        aliases:
+          - nginx
     environment:
       - NGINX_ENVSUBST_TEMPLATE_DIR=/etc/nginx/templates
       - NGINX_ENVSUBST_TEMPLATE_SUFFIX=.template
@@ -118,7 +146,7 @@ services:
     # The parameters are used to automate the process without you needing to
     # manually enter the data on every container run.
     #
-    # certonly: only generate certificate without installing
+    # certonly: only generate certificate without instqaalling
     #
     # webroot: use our own webserver in this case NGINX
     # w: root directory of webserver for the challenges
@@ -133,8 +161,13 @@ services:
     hostname: restarter
     container_name: tb_restarter
     image: docker:cli
-    volumes: ["/var/run/docker.sock:/var/run/docker.sock"]
-    command: ["/bin/sh", "-c", "while true; do sleep 5184000 ; docker restart certbot; done"]
+    volumes: [ "/var/run/docker.sock:/var/run/docker.sock" ]
+    command:
+      [
+        "/bin/sh",
+        "-c",
+        "while true; do sleep 5184000 ; docker restart certbot; done"
+      ]
     restart: unless-stopped
     # In the command statement above the figuer of 5184000 represents the number
     # of seconds in the recommended 60 day certifiace refersh interval at LetsEncrypt
@@ -147,31 +180,45 @@ services:
     working_dir: /var/www/html
     networks:
       frontend:
-      backend:
+      internal:
 
-  # This one is included for completeness ONLY
-  phpmyadmin:
-    image: technoboggle/phpmyadmin-alpine:8.2-3.15
-    container_name: tb_pma
-    depends_on:
-      - mysql
-    links:
-      - mysql
+
+  mongo:
+    image: mongo:5.0
+    container_name: mongo
     environment:
-      - PMA_HOST=mysql
-      - PMA_PORT=33006
-      - PMA_ARBITRARY=1
-    restart: always
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    restart: unless-stopped
     ports:
-      - 8085:80
-    networks:
-      frontend:
-      backend:
+      - "27017:27017"
+    volumes:
+      - data_mongo_db:/data/db
+      - data_mongo_dev:/Databases/dev.archive
+      - data_mongo_production:/Databases/production
+    command: [ --auth ]
+
+  mongo-express:
+    image: mongo-express:0.54.0 # Only this version is connecting, currently.
+    container_name: mexpress
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=root
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=password
+      - ME_CONFIG_MONGODB_URL=mongodb://root:password@mongo:27017/?authSource=admin
+      - ME_CONFIG_BASICAUTH_USERNAME=mexpress
+      - ME_CONFIG_BASICAUTH_PASSWORD=mexpress
+    links:
+      - mongo
+    depends_on:
+      - mongo
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
 
 networks:
-  dev_stack:
   frontend:
-  backend:
+  internal:
+    driver: bridge
 
 volumes:
   # Putting an NFS example here as a memory aid: DO NOT ENABLE
@@ -231,6 +278,27 @@ volumes:
       device: "${PWD}/data/redis"
       o: bind
 
+  data_mongo_db:
+    driver: local
+    driver_opts:
+      type: none
+      device: "${PWD}/data/mongodb/db"
+      o: bind
+
+  data_mongo_dev:
+    driver: local
+    driver_opts:
+      type: none
+      device: "${PWD}/data/mongodb/dev.archive"
+      o: bind
+
+  data_mongo_production:
+    driver: local
+    driver_opts:
+      type: none
+      device: "${PWD}/data/mongodb/production"
+      o: bind
+
   data_mysql:
     driver: local
     driver_opts:
@@ -243,4 +311,18 @@ volumes:
     driver_opts:
       type: none
       device: "${PWD}/log/redis"
+      o: bind
+
+  php_conf:
+    driver: local
+    driver_opts:
+      type: none
+      device: "${PWD}/conf/php"
+      o: bind
+
+  phpmyadminsessions:
+    driver: local
+    driver_opts:
+      type: none
+      device: "${PWD}/conf/myphpadmin/sessions"
       o: bind

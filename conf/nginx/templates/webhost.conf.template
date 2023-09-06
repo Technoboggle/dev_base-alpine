@@ -14,19 +14,19 @@ server {
   #++++#
 
   ## redirect server using 301  PERMANANET REDIRECT to https server
-  #location / {
-  #  return 301 https://$server_name/;
-  #  break;
-  #}
+  location / {
+    return 301 https://$server_name/;
+    break;
+  }
 
   #++++#
 
   # DISABLE CODE BETWEEN #----# SYMBOLS AFTER CERTIFICATE ISSUED
   #----#
 
-  location ~ /.well-known/acme-challenge/ {
-    root /var/www/certbot;
-  }
+  #location ~ /.well-known/acme-challenge/ {
+  #  root /var/www/certbot;
+  #}
 
   #----#
 }
@@ -121,10 +121,15 @@ server {
     internal;
   }
 
-  # location ~* /((40[34]|50[0234])\.html)|(logo.png|favicon-16x16.png|favicon-32x32.png) {
-  #   root                    /var/www/errors;
-  #   internal;
-  # }
+  location ~ /errors.css$ {
+    root /var/www/errors;
+    internal;
+  }
+
+ location ~* /((40[34]|50[0234])\.html)|(logo.png|favicon-16x16.png|favicon-32x32.png) {
+     root                    /var/www/errors;
+     internal;
+  }
 
 
   ssl_certificate     /etc/letsencrypt/live/${NGINX_DOMAIN}/fullchain.pem;
@@ -160,7 +165,7 @@ server {
     # to the default. this is here for completeness only
     #root /var/www/omni/wslive;
     # Declare the unix socket to be used for the php-fpm connection
-    fastcgi_pass   127.0.0.1:9074;    #set port for php-fpm to listen on
+    fastcgi_pass  tb_php:9000;    #set port for php-fpm to listen on
     #fastcgi_pass unix:/var/run/php-fpm/php-fpm.sock;
     # Set the default page to be served for php files
     fastcgi_index index.php;
@@ -186,6 +191,21 @@ server {
   location ~* \.(eot|otf|svg|ttf|woff|woff2)$ {
     add_header     'Access-Control-Allow-Credentials'      'true';
   }
+
+  location /pma {
+    try_files $uri =404;
+    fastcgi_pass tb_pma:9900;
+    fastcgi_index index.php;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    include fastcgi_params;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header Host $http_host;
+    proxy_read_timeout 1600;
+    proxy_buffer_size 128k;
+    proxy_buffers 16 256k;
+    proxy_busy_buffers_size 256k;
+  }
+
 
   location / {
     if ($request_method !~ ^(GET|HEAD|POST)$ ) {

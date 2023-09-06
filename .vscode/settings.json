@@ -57,4 +57,111 @@
     ],
     "php.validate.executablePath": "/usr/local/opt/php@8.3/bin/php",
     "intelephense.environment.phpVersion": "8.3.0",
+    "json.schemas": [
+        {
+            "fileMatch": [
+                "translations.json"
+            ],
+            "schema": {
+                "$schema": "http://json-schema.org/draft-04/schema#",
+                "type": "object",
+                "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                        "file_name_pattern": {
+                            "type": "string"
+                        },
+                        "export_format": {
+                            "type": "string"
+                        },
+                        "find_all_fields": {
+                            "type": "boolean"
+                        },
+                        "expected_column_count": {
+                            "type": "integer"
+                        },
+                        "header_checksum": {
+                            "type": "string"
+                        },
+                        "reject_on_header_fail": {
+                            "type": "boolean"
+                        },
+                        "encapsulate_strings": {
+                            "type": "boolean"
+                        },
+                        "op_eol_string": {
+                            "type": "string"
+                        },
+                        "op_blank_line_eof": {
+                            "type": "boolean"
+                        },
+                        "columns": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "object",
+                                "properties": {
+                                    "data_type": {
+                                        "type": "string"
+                                    },
+                                    "min_size": {
+                                        "type": "integer"
+                                    },
+                                    "max_size": {
+                                        "type": "integer"
+                                    },
+                                    "out_name": {
+                                        "type": "string"
+                                    },
+                                    "out_position": {
+                                        "type": "integer"
+                                    },
+                                    "pattern": {
+                                        "type": "string"
+                                    },
+                                    "validation_rule": {
+                                        "type": "string"
+                                    },
+                                    "process_function": {
+                                        "type": "string"
+                                    },
+                                    "skipped": {
+                                        "type": "boolean"
+                                    },
+                                    "needed": {
+                                        "type": "boolean"
+                                    }
+                                },
+                                "optional": [
+                                    "data_type",
+                                    "min_size",
+                                    "max_size",
+                                    "out_name",
+                                    "out_position",
+                                    "pattern",
+                                    "validation_rule",
+                                    "process_function",
+                                    "required",
+                                    "skipped"
+                                ]
+                            }
+                        }
+                    },
+                    "required": [
+                        "export_format",
+                        "find_all_fields",
+                        "expected_column_count",
+                        "header_checksum",
+                        "reject_on_header_fail",
+                        "encapsulate_strings",
+                        "op_eol_string",
+                        "op_blank_line_eof",
+                        "columns"
+                    ]
+                },
+                "required": [
+                    "Customer"
+                ]
+            }
+        }
+    ]
 }
